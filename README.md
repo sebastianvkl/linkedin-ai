@@ -16,6 +16,23 @@ AI-powered reply suggestions for LinkedIn messages using Claude API. Generate pr
 - **Keyboard Shortcuts**: `Ctrl+Shift+A` to quickly access the AI assistant
 - **Side Panel UI**: Clean, intuitive settings interface
 
+## Screenshots
+
+### Settings Panel
+Configure your API key, response tone, meeting link, and advanced settings.
+
+![Settings Panel](assets/screenshots/settings-panel.png)
+
+### Quick Actions
+Choose from Reply, Follow Up, Schedule, or Outreach actions with one click.
+
+![Quick Actions](assets/screenshots/quick-actions.png)
+
+### AI Suggestions
+Get multiple contextual message suggestions tailored to your conversation.
+
+![AI Suggestions](assets/screenshots/suggestions.png)
+
 ## Prerequisites
 
 - Chrome browser (or Chromium-based browser)
