@@ -1,4 +1,4 @@
-import { findElement } from './selectors'
+import { findElement, queryShadowSelector } from './selectors'
 
 // Insert text into LinkedIn's message input field
 export function insertReply(text: string): boolean {

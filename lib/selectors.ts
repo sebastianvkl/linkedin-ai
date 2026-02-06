@@ -213,11 +213,53 @@ export const SELECTORS = {
   ]
 } as const
 
+// Get LinkedIn's shadow roots (messaging overlay is inside a shadow DOM on non-messaging pages)
+export function getLinkedInShadowRoots(): ShadowRoot[] {
+  const roots: ShadowRoot[] = []
+  const shadowHost = document.querySelector('[data-testid="interop-shadowdom"]')
+  if (shadowHost?.shadowRoot) {
+    roots.push(shadowHost.shadowRoot)
+  }
+  return roots
+}
+
+// Query selector that also searches LinkedIn's shadow DOMs
+export function queryShadowSelector(selector: string, parent?: Document | Element | ShadowRoot): Element | null {
+  const root = parent || document
+  const result = root.querySelector(selector)
+  if (result) return result
+
+  // If searching from document level (no specific parent), also check shadow roots
+  if (!parent || parent === document) {
+    for (const shadowRoot of getLinkedInShadowRoots()) {
+      const shadowResult = shadowRoot.querySelector(selector)
+      if (shadowResult) return shadowResult
+    }
+  }
+
+  return null
+}
+
+// Query selector all that also searches LinkedIn's shadow DOMs
+export function queryShadowSelectorAll(selector: string, parent?: Document | Element | ShadowRoot): Element[] {
+  const root = parent || document
+  const results = Array.from(root.querySelectorAll(selector))
+
+  // If searching from document level, also check shadow roots
+  if (!parent || parent === document) {
+    for (const shadowRoot of getLinkedInShadowRoots()) {
+      results.push(...Array.from(shadowRoot.querySelectorAll(selector)))
+    }
+  }
+
+  return results
+}
+
 // Helper function to find element using fallback selectors
 export function findElement(selectorKey: keyof typeof SELECTORS, parent: Document | Element = document): Element | null {
   const selectors = SELECTORS[selectorKey]
   for (const selector of selectors) {
-    const element = parent.querySelector(selector)
+    const element = queryShadowSelector(selector, parent)
     if (element) return element
   }
   return null
@@ -227,8 +269,8 @@ export function findElement(selectorKey: keyof typeof SELECTORS, parent: Documen
 export function findAllElements(selectorKey: keyof typeof SELECTORS, parent: Document | Element = document): Element[] {
   const selectors = SELECTORS[selectorKey]
   for (const selector of selectors) {
-    const elements = parent.querySelectorAll(selector)
-    if (elements.length > 0) return Array.from(elements)
+    const elements = queryShadowSelectorAll(selector, parent)
+    if (elements.length > 0) return elements
   }
   return []
 }
@@ -238,16 +280,16 @@ export function isMessagingPage(): boolean {
   // Check URL
   if (window.location.href.includes('/messaging/')) return true
 
-  // Check for messaging overlay container (popup chat)
+  // Check for messaging overlay container (popup chat) — searches shadow DOM too
   if (findElement('messagingContainer') !== null) return true
 
-  // Check for any open conversation bubble
-  if (document.querySelector('.msg-overlay-conversation-bubble') !== null) return true
-  if (document.querySelector('.msg-overlay-bubble-header') !== null) return true
+  // Check for any open conversation bubble (searches shadow DOM too)
+  if (queryShadowSelector('.msg-overlay-conversation-bubble') !== null) return true
+  if (queryShadowSelector('.msg-overlay-bubble-header') !== null) return true
 
   // Check for compose/new message window
-  if (document.querySelector('.msg-compose-form-v2') !== null) return true
-  if (document.querySelector('[class*="msg-compose"]') !== null) return true
+  if (queryShadowSelector('.msg-compose-form-v2') !== null) return true
+  if (queryShadowSelector('[class*="msg-compose"]') !== null) return true
 
   return false
 }

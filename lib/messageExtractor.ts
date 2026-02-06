@@ -1,4 +1,4 @@
-import { findElement, findAllElements, SELECTORS } from './selectors'
+import { findElement, findAllElements, SELECTORS, queryShadowSelector, queryShadowSelectorAll } from './selectors'
 
 export interface Message {
   sender: 'self' | 'other'
@@ -270,7 +270,8 @@ function getRecipientProfile(): UserProfile {
 
   // CRITICAL: Use the message input as an anchor to find the correct compose modal
   // This prevents matching elements from profile pages visible in the background
-  const messageInput = document.querySelector(
+  // Use shadow-aware selector since messaging overlay may be inside shadow DOM
+  const messageInput = queryShadowSelector(
     '.msg-form__contenteditable, ' +
     '[contenteditable="true"][role="textbox"], ' +
     '.msg-form__message-texteditor [contenteditable]'
@@ -405,7 +406,7 @@ function getRecipientProfile(): UserProfile {
 
   if (!profileUrl) {
     for (const selector of SELECTORS.recipientProfileLink) {
-      const link = document.querySelector(selector) as HTMLAnchorElement
+      const link = queryShadowSelector(selector) as HTMLAnchorElement
       if (link?.href) {
         profileUrl = link.href
         if (!name) {
@@ -418,7 +419,7 @@ function getRecipientProfile(): UserProfile {
 
   if (!headline) {
     for (const selector of SELECTORS.recipientHeadline) {
-      const el = document.querySelector(selector)
+      const el = queryShadowSelector(selector)
       if (el?.textContent?.trim()) {
         headline = el.textContent.trim()
         break

@@ -6,14 +6,13 @@ import { TriggerButton } from '~components/TriggerButton'
 import { QuickActions, type QuickActionType } from '~components/QuickActions'
 import { getConversationContext } from '~lib/messageExtractor'
 import { insertReply, isInputAvailable } from '~lib/messageInsertion'
-import { isMessagingPage } from '~lib/selectors'
+import { isMessagingPage, getLinkedInShadowRoots } from '~lib/selectors'
 import type { GenerateReplyRequest, GenerateReplyResponse } from '~background/messages/generate-reply'
 import type { GenerateOutreachRequest, GenerateOutreachResponse } from '~background/messages/generate-outreach'
 
 export const config: PlasmoCSConfig = {
   matches: ['https://www.linkedin.com/messaging/*', 'https://www.linkedin.com/*'],
-  all_frames: true,
-  match_about_blank: true
+  all_frames: false
 }
 
 // Create a custom root container directly on the body to avoid LinkedIn's CSS interference
@@ -85,6 +84,33 @@ function LinkedInAIOverlay() {
       subtree: true
     })
 
+    // Also watch LinkedIn's shadow DOM for messaging overlay changes
+    // LinkedIn renders the messaging popup inside a shadow root on non-messaging pages
+    const shadowObserver = new MutationObserver(() => {
+      checkPage()
+    })
+
+    const setupShadowObserver = () => {
+      const shadowRoots = getLinkedInShadowRoots()
+      for (const root of shadowRoots) {
+        shadowObserver.observe(root, { childList: true, subtree: true })
+      }
+      return shadowRoots.length > 0
+    }
+
+    // Shadow root might not be ready immediately, retry periodically
+    if (!setupShadowObserver()) {
+      const retryInterval = setInterval(() => {
+        if (setupShadowObserver()) {
+          clearInterval(retryInterval)
+          checkPage() // Re-check once shadow root is found
+        }
+      }, 1000)
+
+      // Clean up retry after 30 seconds
+      setTimeout(() => clearInterval(retryInterval), 30000)
+    }
+
     // Also listen for URL changes
     const handleUrlChange = () => {
       setTimeout(checkPage, 500) // Small delay for DOM to update
@@ -95,6 +121,7 @@ function LinkedInAIOverlay() {
 
     return () => {
       observer.disconnect()
+      shadowObserver.disconnect()
       window.removeEventListener('popstate', handleUrlChange)
       window.removeEventListener('hashchange', handleUrlChange)
     }
