@@ -1,7 +1,7 @@
 {
   "name": "linkedin-ai",
   "displayName": "LinkedIn AI Reply",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "AI-powered reply suggestions for LinkedIn messages using Claude API.",
   "author": "LinkedIn AI Extension",
   "scripts": {
