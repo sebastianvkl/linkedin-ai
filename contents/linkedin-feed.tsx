@@ -8,7 +8,9 @@ import type { GenerateCommentRequest, GenerateCommentResponse, PostContext } fro
 
 export const config: PlasmoCSConfig = {
   matches: ['https://www.linkedin.com/feed*', 'https://www.linkedin.com/in/*', 'https://www.linkedin.com/posts/*'],
-  all_frames: true
+  all_frames: true,
+  match_about_blank: true,
+  match_origin_as_fallback: true
 }
 
 // Create a custom root container directly on the body to avoid LinkedIn's CSS interference
