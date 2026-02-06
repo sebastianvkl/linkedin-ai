@@ -13,8 +13,7 @@ import type { GenerateOutreachRequest, GenerateOutreachResponse } from '~backgro
 export const config: PlasmoCSConfig = {
   matches: ['https://www.linkedin.com/messaging/*', 'https://www.linkedin.com/*'],
   all_frames: true,
-  match_about_blank: true,
-  match_origin_as_fallback: true
+  match_about_blank: true
 }
 
 // Create a custom root container directly on the body to avoid LinkedIn's CSS interference
