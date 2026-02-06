@@ -1,0 +1,23 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background with LinkedIn blue gradient -->
+  <rect width="512" height="512" rx="96" fill="url(#gradient)"/>
+
+  <!-- Chat bubble -->
+  <path d="M128 160C128 137.909 145.909 120 168 120H344C366.091 120 384 137.909 384 160V296C384 318.091 366.091 336 344 336H280L216 392V336H168C145.909 336 128 318.091 128 296V160Z" fill="white"/>
+
+  <!-- Sparkle 1 (main, center) -->
+  <path d="M256 180L264 212L296 220L264 228L256 260L248 228L216 220L248 212L256 180Z" fill="#0a66c2"/>
+
+  <!-- Sparkle 2 (top right, smaller) -->
+  <path d="M320 168L325 184L341 189L325 194L320 210L315 194L299 189L315 184L320 168Z" fill="#0a66c2"/>
+
+  <!-- Sparkle 3 (bottom left, smaller) -->
+  <path d="M192 248L197 264L213 269L197 274L192 290L187 274L171 269L187 264L192 248Z" fill="#0a66c2"/>
+
+  <defs>
+    <linearGradient id="gradient" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0a66c2"/>
+      <stop offset="1" stop-color="#004182"/>
+    </linearGradient>
+  </defs>
+</svg>
